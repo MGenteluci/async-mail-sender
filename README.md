@@ -1,8 +1,10 @@
 Serverless Asynchronous Mail Sender
 
 Used technologies
-* AWS Lambda
 * Amazon API Gateway
+* AWS Lambda
+* Amazon DynamoDB
 * Amazon SQS
+* Amazon CloudWatch
 * Amazon SES
 * Typescript
