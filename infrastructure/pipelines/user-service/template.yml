@@ -39,7 +39,7 @@ Resources:
         Image: aws/codebuild/amazonlinux2-aarch64-standard:2.0
         Type: ARM_CONTAINER
       Name: UserServiceCodeBuild
-      ServiceRole: !GetAtt CodeBuildRole.Arm
+      ServiceRole: !GetAtt CodeBuildRole.Arn
       Source:
         BuildSpec: ./packages/user-service/buildspec.yml
         Type: CODEPIPELINE
