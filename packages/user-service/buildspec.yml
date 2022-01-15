@@ -8,5 +8,7 @@ phases:
       - npm install
   build:
     commands:
+      - cp -R ./node_modules ./packages/user-service/create-user
+      - cp -R ./node_modules ./packages/user-service/send-mail
       - cd ./packages/user-service
       - ./build.sh

@@ -4,6 +4,7 @@ function buildLambda {
     declare lambda=$1
     cd $lambda
     npm run build || exit 1
+    npm prune --production
     cd ..
 }
 
