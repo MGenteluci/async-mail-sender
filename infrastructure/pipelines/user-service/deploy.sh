@@ -8,5 +8,5 @@ function die {
 
 aws cloudformation deploy \
     --template-file template.yml \
-    --stack-name AsyncMailSenderPipeline \
+    --stack-name UserServicePipeline \
     --capabilities CAPABILITY_NAMED_IAM || die 'CloudFormation Deploy Failed'

@@ -27,6 +27,10 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: '*'
+              - Effect: Allow
+                Action:
+                  - s3:*
+                Resource: !ImportValue CodePipeline-us-east-1-BucketName
 
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
@@ -36,9 +40,9 @@ Resources:
       Description: CodeBuild project to build the UserService
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/amazonlinux2-aarch64-standard:2.0
-        Type: ARM_CONTAINER
-      Name: UserServiceCodeBuild
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        Type: LINUX_CONTAINER
+      Name: UserService
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Source:
         BuildSpec: ./packages/user-service/buildspec.yml
@@ -87,7 +91,7 @@ Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: UserServicePipeline
+      Name: UserService
       RoleArn: !GetAtt PipelineRole.Arn
       ArtifactStore:
         Location: !ImportValue CodePipeline-us-east-1-BucketName
