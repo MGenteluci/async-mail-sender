@@ -6,4 +6,5 @@ phases:
       nodejs: 14
   build:
     commands:
+      - cd ./packages/user-service
       - ./build.sh
