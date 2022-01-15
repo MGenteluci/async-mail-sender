@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: Resources to be shared across AWS Account
+
+Resources:
+  PersonalGHConnection:
+    Type: AWS::CodeStarConnections::Connection
+    Properties:
+      ConnectionName: PersonalGHConnection
+      ProviderType: GitHub
+
+  CodePipelineUSEast1Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: codepipeline-us-east-1-1642217136763
+
+Outputs:
+  PersonalGHConnectionArn:
+    Description: Personal GitHub CodeStarConnection Arn
+    Value: !Ref PersonalGHConnection
+    Export:
+      Name: PersonalGHConnectionArn
+
+  CodePipelineUSEast1BucketName:
+    Description: Name of the bucket to be used for CodePipelines in us-east-1
+    Value: !Ref CodePipelineUSEast1Bucket
+    Export:
+      Name: CodePipeline-us-east-1-BucketName
