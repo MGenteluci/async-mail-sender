@@ -30,7 +30,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - s3:*
-                Resource: !ImportValue CodePipeline-us-east-1-BucketName
+                Resource: '*'
 
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
