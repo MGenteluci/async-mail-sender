@@ -1,0 +1,9 @@
+{
+  "name": "@ams/user-service-create-user",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "pre:build": "rm -rf /dist",
+    "build": "npm run pre:build && tsc"
+  }
+}

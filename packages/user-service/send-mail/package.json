@@ -1,0 +1,10 @@
+{
+    "name": "@ams/user-service-send-mail",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "scripts": {
+      "pre:build": "rm -rf /dist",
+      "build": "npm run pre:build && tsc"
+    }
+  }
+  

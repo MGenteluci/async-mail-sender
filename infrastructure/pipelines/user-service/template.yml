@@ -3,10 +3,51 @@ Transform: AWS::Serverless-2016-10-31
 Description: Pipeline to deploy the application
 
 Resources:
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: UserServiceCodeBuildRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: UserService-CodeBuild-Policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
+
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Description: CodeBuild project to build the UserService
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-aarch64-standard:2.0
+        Type: ARM_CONTAINER
+      Name: UserServiceCodeBuild
+      ServiceRole: !GetAtt CodeBuildRole.Arm
+      Source:
+        BuildSpec: ./packages/user-service/buildspec.yml
+        Type: CODEPIPELINE
+
   PipelineRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: AsyncMailSenderCodePipelineRole
+      RoleName: UserServiceCodePipelineRole
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -17,7 +58,7 @@ Resources:
             Action: sts:AssumeRole
       Path: /
       Policies:
-        - PolicyName: AsyncMailSender-CodePipeline-Policy
+        - PolicyName: UserService-CodePipeline-Policy
           PolicyDocument:
             Version: 2012-10-17
             Statement:
@@ -46,7 +87,7 @@ Resources:
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: AsyncMailSenderPipeline
+      Name: UserServicePipeline
       RoleArn: !GetAtt PipelineRole.Arn
       ArtifactStore:
         Location: !ImportValue CodePipeline-us-east-1-BucketName
@@ -66,3 +107,17 @@ Resources:
                 ConnectionArn: !ImportValue PersonalGHConnectionArn
                 FullRepositoryId: MGenteluci/async-mail-sender
                 BranchName: main
+        - Name: Build
+          Actions:
+            - Name: Build
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                ProjectName: !Ref CodeBuildProject
+              InputArtifacts:
+                - Name: SourceArtifact
+              OutputArtifacts:
+                - Name: BuildArtifact

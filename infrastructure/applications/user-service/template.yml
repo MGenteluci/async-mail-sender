@@ -1,0 +1,145 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Handler: dist/index.handler
+    Runtime: nodejs14.x
+    Timeout: 30
+    Tracing: Active
+
+Resources:
+  CreateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: create-user
+      CodeUri: ../../packages/user-service/create-user
+      AutoPublishAlias: !Ref AliasName
+      Policies:
+        - AWSLambdaExecute
+        - AWSLambdaVPCAccessExecutionRole
+
+  CreateUserFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt CreateUserFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:execute-api:'
+            - Ref: AWS::Region
+            - ':'
+            - Ref: AWS::AccountId
+            - ':'
+            - Ref: UserService
+            - '/*'
+
+  CreateUserFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    DependsOn: CreateUserFunction
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${CreateUserFunction}
+      RetentionInDays: 2
+
+  SendMailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: send-mail
+      CodeUri: ../../packages/user-service/send-mail
+      AutoPublishAlias: !Ref AliasName
+      Policies:
+        - AWSLambdaExecute
+        - AWSLambdaVPCAccessExecutionRole
+
+  SendMailFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt SendMailFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:execute-api:'
+            - Ref: AWS::Region
+            - ':'
+            - Ref: AWS::AccountId
+            - ':'
+            - Ref: UserService
+            - '/*'
+
+  SendMailFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    DependsOn: SendMailFunction
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${SendMailFunction}
+      RetentionInDays: 2
+
+  UserService:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: user-service
+      EndpointConfiguration: Regional
+      StageName: !Ref AliasName
+      DefinitionBody:
+        swagger: 2.0
+        info:
+          title: user-service
+        schemes:
+          - 'https'
+        x-amazon-apigateway-api-key-source: 'HEADER'
+        x-amazon-apigateway-policy:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: 'Allow'
+              Principal: '*'
+              Action: 'execute-api:Invoke'
+              Resource: 'execute-api:/*'
+        securityDefinitions:
+          api_key:
+          type: apiKey
+          name: x-api-key
+          in: header
+        paths:
+          /users:
+            post:
+              responses: {}
+              security:
+                - api_key: []
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateUserFunction.Arn}/invocations'
+                passthroughBehavior: 'when_no_match'
+
+  UserServiceDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref UserService
+
+  UserServiceUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      ApiStages:
+        - ApiId: !Ref UserService
+          Stage: !Ref UserService.Stage
+      UsagePlanName: UserService
+
+  UserServiceApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Description: UserService API Key
+      Enabled: true
+      Name: UserService-APIKey
+      StageKeys:
+        - StageName: !Ref UserService.Stage
+          RestApiId: !Ref UserService
+
+  ApiKeyUsagePlan:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref UserServiceApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref UserServiceUsagePlan
