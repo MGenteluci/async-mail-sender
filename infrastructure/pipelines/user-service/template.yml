@@ -109,6 +109,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - 'cloudwatch:*'
+                  - 'logs:*'
                   - 'lambda:*'
                   - 'cloudformation:*'
                   - 'iam:*'
