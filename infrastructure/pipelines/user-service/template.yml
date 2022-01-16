@@ -161,6 +161,7 @@ Resources:
               Name: Deploy
               Configuration:
                 ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_AUTO_EXPAND
                 RoleArn: !GetAtt CloudFormationDeployRole.Arn
                 StackName: user-service
                 TemplatePath: 'BuildArtifact::packaged-template.yml'
