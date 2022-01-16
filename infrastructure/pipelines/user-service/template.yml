@@ -113,6 +113,7 @@ Resources:
                   - 'cloudformation:*'
                   - 'iam:*'
                   - 's3:*'
+                  - 'apigateway:*'
                 Resource: '*'
 
   Pipeline:

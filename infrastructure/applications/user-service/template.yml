@@ -40,7 +40,7 @@ Resources:
     DependsOn: CreateUserFunction
     Properties:
       LogGroupName: !Sub /aws/lambda/${CreateUserFunction}
-      RetentionInDays: 2
+      RetentionInDays: 3
 
   SendMailFunction:
     Type: AWS::Serverless::Function
@@ -73,7 +73,7 @@ Resources:
     DependsOn: SendMailFunction
     Properties:
       LogGroupName: !Sub /aws/lambda/${SendMailFunction}
-      RetentionInDays: 2
+      RetentionInDays: 3
 
   UserService:
     Type: AWS::Serverless::Api
