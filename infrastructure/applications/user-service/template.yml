@@ -97,9 +97,9 @@ Resources:
               Resource: 'execute-api:/*'
         securityDefinitions:
           api_key:
-          type: apiKey
-          name: x-api-key
-          in: header
+            type: apiKey
+            name: x-api-key
+            in: header
         paths:
           /users:
             post:
