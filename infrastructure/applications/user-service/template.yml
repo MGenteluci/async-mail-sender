@@ -14,7 +14,6 @@ Resources:
     Properties:
       FunctionName: create-user
       CodeUri: ../../../packages/user-service/create-user
-      AutoPublishAlias: !Ref AliasName
       Policies:
         - AWSLambdaExecute
         - AWSLambdaVPCAccessExecutionRole
@@ -48,7 +47,6 @@ Resources:
     Properties:
       FunctionName: send-mail
       CodeUri: ../../../packages/user-service/send-mail
-      AutoPublishAlias: !Ref AliasName
       Policies:
         - AWSLambdaExecute
         - AWSLambdaVPCAccessExecutionRole
@@ -82,7 +80,7 @@ Resources:
     Properties:
       Name: user-service
       EndpointConfiguration: Regional
-      StageName: !Ref AliasName
+      StageName: latest
       DefinitionBody:
         swagger: 2.0
         info:
