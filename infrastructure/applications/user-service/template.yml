@@ -13,7 +13,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: create-user
-      CodeUri: ../../packages/user-service/create-user
+      CodeUri: ../../../packages/user-service/create-user
       AutoPublishAlias: !Ref AliasName
       Policies:
         - AWSLambdaExecute
@@ -47,7 +47,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: send-mail
-      CodeUri: ../../packages/user-service/send-mail
+      CodeUri: ../../../packages/user-service/send-mail
       AutoPublishAlias: !Ref AliasName
       Policies:
         - AWSLambdaExecute
