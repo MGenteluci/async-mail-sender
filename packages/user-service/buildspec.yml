@@ -12,3 +12,9 @@ phases:
       - cp -R ./node_modules ./packages/user-service/send-mail
       - cd ./packages/user-service
       - ./build.sh
+      - cd ../../infrastructure/applications/user-service
+      - ./package.sh
+
+artifacts:
+  files:
+    - ./infrastructure/applications/user-service/packaged-template.yml
