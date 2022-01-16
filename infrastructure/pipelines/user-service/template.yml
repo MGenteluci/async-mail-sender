@@ -112,6 +112,7 @@ Resources:
                   - 'lambda:*'
                   - 'cloudformation:*'
                   - 'iam:*'
+                  - 's3:*'
                 Resource: '*'
 
   Pipeline:
